@@ -77,58 +77,98 @@ df.show()
 ### SELECT columns
 print("===================Select==================")
 print()
-selDF = df.select("txndate", "amount")
+selDF = df.select(
+    "txnno",
+    "txndate",
+    "amount",
+    "category",
+    "subcategory",
+    "spendmode"
+)
 
 selDF.show()
 
-### DROP columns
-print("===================Drop==================")
+print("===================Select Expression==================")
 print()
-dropDf = df.drop("txndate", "amount")
+selExprDF = df.selectExpr(
+    "cast(txnno as int) as txnno",
+    "txndate",
+    "split(txndate,'-')[2] as year",
+    "amount + 1000 as amount",
+    "upper(category) as category", # processing
+    "concat(subcategory,'~zeyo') as subcategory",
+    "spendmode",
+    "case when spendmode = 'cash' then 1 else 0 end as status",
+    "case when spendmode = 'cash' then 1 when spendmode = 'credit' then 2 else 0 end as multiCondition"
+)
 
-dropDf.show()
+selExprDF.show()
 
-print("===================Filter: category = 'Exercise'==================")
-print()
 
-filCol = df.filter("category = 'Exercise'")
-filCol.show()
 
-print("===================Filter: category = 'Exercise' and spendmode = 'cash'==================")
-print()
+selExprDF1 = df.selectExpr(
+    "cast(txnno as int) as txnno",
+    "to_date(txndate, 'dd-mm-yyyy') as txndate",
+    "year(to_date(txndate, 'dd-mm-yyyy')) as year",
+    "amount + 1000 as amount",
+    "upper(category) as category", # processing
+    "concat(subcategory,'~zeyo') as subcategory",
+    "spendmode",
+    "case when spendmode = 'cash' then 1 else 0 end as status",
+    "case when spendmode = 'cash' then 1 when spendmode = 'paytm' then 2 else 0 end as multiStatus"
+)
 
-filMultpleCol = df.filter("category = 'Exercise' and spendmode = 'cash'")
-filMultpleCol.show()
+selExprDF1.show()
+selExprDF1.printSchema()
 
-print("===================Filter: category = 'Exercise' or spendmode = 'cash'==================")
-print()
+print("===================With Columns Dataframe==================")
+withColDF = (
+    df
+    .withColumn(
+        "category",
+        expr("upper('category')")
+    )
+    .withColumn(
+        "amount",
+        expr("amount + 1000")
+    )
+    .withColumn(
+        "subcategory",
+        expr("concat(subcategory, '~zeyo')")
+    )
+    .withColumn(
+        "txnno",
+        expr("cast(txnno as int)")
+    )
+    .withColumn(
+        "txndate",
+        expr("to_date(txndate, 'dd-mm-yyyy')")
+    )
+    .withColumn(
+        "status",
+        expr("case when spendmode = 'cash' then 1 else 0 end")
+    )
+    # Rename the txndate
+    .withColumnRenamed("txndate","year")
+)
+withColDF.show()
 
-filMultpleorCol = df.filter("category = 'Exercise' or spendmode = 'cash'")
-filMultpleorCol.show()
 
-print("===================Filter: category in 'Exercise' and 'Gymnastics'==================")
-print()
 
-inFilDf = df.filter("category in ('Exercise','Gymnastics')")
-inFilDf.show()
 
-print("===================Filter: category not in 'Exercise' and 'Gymnastics'==================")
-print()
 
-NotinFilDf = df.filter("category not in ('Exercise','Gymnastics')")
-NotinFilDf.show()
 
-# print("===================Filter: ==================")
-# print()
-#
-# filMultpleCol = df.filter("category = 'Exercise' and spendmode = 'cash'")
-# filMultpleCol.show()
-#
-# print("===================Filter: ==================")
-# print()
-#
-# filMultpleCol = df.filter("category = 'Exercise' and spendmode = 'cash'")
-# filMultpleCol.show()
+
+
+
+
+
+
+
+
+
+
+
 
 
 

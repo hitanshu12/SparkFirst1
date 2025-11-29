@@ -76,4 +76,6 @@ addrdd = rddls.map(lambda x : x + 2)
 print(addrdd.collect())
 
 
+print("Spark Version: ", spark.version)
+
 
