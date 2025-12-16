@@ -72,7 +72,7 @@ df.select(col("Seqno"), \
           convertUDF(col("Name")).alias("Name") ) \
     .show(truncate=False)
 
-def upperCase(str):
+def  (str):
     return str.upper()
 
 upperCaseUDF = udf(lambda z:upperCase(z),StringType())
