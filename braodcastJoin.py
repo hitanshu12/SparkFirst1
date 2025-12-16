@@ -1,4 +1,3 @@
-
 import os
 import urllib.request
 import ssl
@@ -74,11 +73,6 @@ prod.show()
 
 broadcastJoin = (
     cust.join(broadcast(prod), ["id"], "full")
-    .filter(
-        (col("name").isNotNull()) & (col("product").isNotNull())
-    )
 )
 broadcastJoin.show()
-broadcastJoin.explain()
-input("enter to terminate session")
 
