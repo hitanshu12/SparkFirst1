@@ -44,6 +44,7 @@ spark = SparkSession.builder.getOrCreate()
 ##################🔴🔴🔴🔴🔴🔴 -> DONT TOUCH ABOVE CODE -- TYPE BELOW ####################################
 
 from pyspark.sql.functions import *
+from pyspark.sql.window import Window
 
 spark = SparkSession.builder.getOrCreate()
 
@@ -183,6 +184,30 @@ df = spark.createDataFrame(data, schema) \
 
 df.show(truncate=False)
 df.printSchema()
+
+# find the highest salary
+print("# find the highest salary")
+highestDF = (
+    df.select(max('salary').alias("highest_salary") )
+)
+highestDF.show()
+
+print("# find the highest salary in each department")
+w = Window.partitionBy(col("dept_id")).orderBy(col("salary").desc())
+deftHighestSalDF = (
+    df.withColumn("highestSal", max(col("salary")).over(w))
+)
+deftHighestSalDF.show()
+
+
+# find the third-highest salary
+print("# find the third highest salary")
+
+third_highest = (
+    df.withColumn("drnk", dense_rank().over(w))
+    .filter("drnk == 3")
+)
+third_highest.show()
 
 print("inner query")
 # inner_query = (
