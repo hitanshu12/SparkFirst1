@@ -334,7 +334,33 @@ second_highest_salary.show()
 
 
 
+data = [
+    (1, "Alice",   "IT"),
+    (2, "Bob",     "IT"),
+    (3, "Alice",   "IT"),      # duplicate in IT
+    (4, "Charlie", "HR"),
+    (5, "David",   "HR"),
+    (6, "Charlie", "HR"),      # duplicate in HR
+    (7, "Eve",     "Finance"),
+    (8, "Frank",   "Finance"),
+    (9, "Eve",     "Finance"), # duplicate in Finance
+    (10, "Alice",  "HR")       # NOT duplicate (different department)
+]
 
+columns = ["emp_id", "emp_name", "department"]
+
+df = spark.createDataFrame(data, columns)
+df.show()
+
+
+
+procdf = df.groupBy("emp_name","department").agg(count("*").alias("cnt"))
+procdf.show()
+
+
+
+finaldf = procdf.filter("cnt>1").select("emp_name","department")
+finaldf.show()
 
 
 
